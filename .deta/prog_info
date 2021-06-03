@@ -1,0 +1,1 @@
+{"id":"f8e320c4-7c15-4af8-bc72-26b158fd25cb","space":4056,"runtime":"nodejs12.x","name":"flowchart-fun-deta","path":"3p4zlr","project":"b0mpx6w7","account":"144798365827","region":"us-west-1","deps":["cors@^2.8.5","deta@^0.0.10","express@^4.17.1","body-parser@^1.19.0"],"envs":null,"public":true,"log_level":"debug","cron":""}
