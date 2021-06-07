@@ -9,9 +9,10 @@ import GraphProvider from "./GraphProvider";
 import matter from "gray-matter";
 
 function ReadOnly({ compressed = false }: { compressed?: boolean }) {
-  const { graphText = window.location.hash.slice(1) } = useParams<{
-    graphText: string;
-  }>();
+  const { graphText = window.location.hash.slice(1) } =
+    useParams<{
+      graphText: string;
+    }>();
   const textToParse = compressed
     ? decompress(graphText) ?? ""
     : decodeURIComponent(graphText);
@@ -58,6 +59,7 @@ function ReadOnly({ compressed = false }: { compressed?: boolean }) {
       textToParse={textToParse}
       updateGraphOptionsText={(_n: GraphOptionsObject) => {}}
       graphOptions={graphOptions}
+      isReady={true}
     >
       <Editor
         defaultValue={textToParse}

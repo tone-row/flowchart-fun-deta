@@ -6,6 +6,7 @@ type GraphContextType = {
   editable: boolean;
   updateGraphOptionsText: (n: GraphOptionsObject) => void;
   graphOptions: GraphOptionsObject;
+  isReady: boolean;
 };
 
 export const GraphContext = createContext({} as GraphContextType);
@@ -14,6 +15,7 @@ export default function GraphProvider({
   editable,
   updateGraphOptionsText,
   graphOptions,
+  isReady,
   ...props
 }: MainProps & GraphContextType) {
   const updateOptions = useCallback(updateGraphOptionsText, [
@@ -25,6 +27,7 @@ export default function GraphProvider({
         editable,
         updateGraphOptionsText: updateOptions,
         graphOptions,
+        isReady,
       }}
     >
       <Main {...props} />

@@ -15,6 +15,7 @@
   },
   "scripts": {
     "build": "yarn workspace app build",
-    "deploy": "deta deploy"
+    "start": "yarn workspace app start",
+    "deploy": "yarn build && deta deploy"
   }
 }

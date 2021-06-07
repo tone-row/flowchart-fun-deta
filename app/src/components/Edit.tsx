@@ -15,7 +15,7 @@ import GraphProvider from "./GraphProvider";
 import { stringify } from "gray-matter";
 import useGraphOptions from "./useGraphOptions";
 import merge from "deepmerge";
-import { useLocalStorageText } from "../hooks";
+import { useDefaultText, useText } from "../hooks";
 import { Box, BoxProps } from "../slang";
 import { IoMdHelp } from "react-icons/io";
 import styles from "./Edit.module.css";
@@ -36,7 +36,8 @@ declare global {
 
 function Edit() {
   const monaco = useMonaco();
-  const [text, setText, defaultText] = useLocalStorageText();
+  const defaultText = useDefaultText();
+  const { text, setText, isReady } = useText();
   const [textToParse, setTextToParse] = useReducer(
     (t: string, u: string) => u,
     text
@@ -137,6 +138,7 @@ function Edit() {
       setHoverLineNumber={setHoverLineNumber}
       graphOptions={graphOptions}
       updateGraphOptionsText={updateGraphOptionsText}
+      isReady={isReady}
     >
       <Editor
         value={text}

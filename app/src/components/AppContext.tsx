@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import useLocalStorage from "react-use-localstorage";
+import { queryClient } from "../api";
 import { languages } from "../locales/i18n";
 import { colors, darkTheme } from "../slang/config";
 
@@ -36,12 +37,15 @@ type TAppContext = {
   language: string;
   showing: Showing;
   setShowing: Dispatch<SetStateAction<Showing>>;
+  workspace: string | null;
+  setWorkspace: (workspaceKey: string) => void;
 } & Partial<UserSettings>;
 
 export const AppContext = createContext({} as TAppContext);
 
 const Provider = ({ children }: { children?: ReactNode }) => {
-  const [showing, setShowing] = useState<Showing>("editor");
+  const [showing, setShowing] = useState<Showing>("navigation");
+  const [workspace, _setWorkspace] = useState<TAppContext["workspace"]>(null);
   const [shareLink, setShareLink] = useState("");
   const [userSettingsString, setUserSettings] = useLocalStorage(
     "flowcharts.fun.user.settings",
@@ -75,10 +79,9 @@ const Provider = ({ children }: { children?: ReactNode }) => {
     [setUserSettings, settings]
   );
 
-  useEffect(() => {
-    // Remove chart that may have been stored, so
-    // two indexes aren't shown on charts page
-    window.localStorage.removeItem("flowcharts.fun:");
+  const setWorkspace = useCallback((workspaceKey: string) => {
+    queryClient.invalidateQueries(["flowchart"]);
+    _setWorkspace(workspaceKey);
   }, []);
 
   return (
@@ -92,6 +95,8 @@ const Provider = ({ children }: { children?: ReactNode }) => {
         setShowing,
         ...settings,
         language: settings.language ?? defaultLanguage,
+        workspace,
+        setWorkspace,
       }}
     >
       {children}

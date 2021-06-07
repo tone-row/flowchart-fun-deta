@@ -37,14 +37,14 @@ const Menu = memo(() => {
         >
           <BrandSvg width={40} />
         </Box>
+        <MenuButton show="navigation" onClick={() => setShowing("navigation")}>
+          <Trans>Charts</Trans>
+        </MenuButton>
         <MenuButton show="editor" onClick={() => setShowing("editor")}>
           <Trans>Editor</Trans>
         </MenuButton>
         <MenuButton show="settings" onClick={() => setShowing("settings")}>
           <Trans>Settings</Trans>
-        </MenuButton>
-        <MenuButton show="navigation" onClick={() => setShowing("navigation")}>
-          <Trans>Charts</Trans>
         </MenuButton>
         <MenuButton
           show="share"

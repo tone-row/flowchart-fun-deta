@@ -9,10 +9,10 @@ export default function Router() {
     <BrowserRouter>
       <Layout>
         <Switch>
-          <Route path="/" exact>
+          <Route path="/">
             <Edit />
           </Route>
-          <Route path="/r/:graphText?">
+          {/* <Route path="/r/:graphText?">
             <ReadOnly />
           </Route>
           <Route path="/c/:graphText?">
@@ -20,7 +20,7 @@ export default function Router() {
           </Route>
           <Route path="/:workspace">
             <Edit />
-          </Route>
+          </Route> */}
         </Switch>
       </Layout>
     </BrowserRouter>

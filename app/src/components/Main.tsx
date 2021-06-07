@@ -5,8 +5,10 @@ import React, {
   memo,
   useState,
   useCallback,
+  useContext,
 } from "react";
 import Graph from "./Graph";
+import { GraphContext } from "./GraphProvider";
 import GraphWrapper from "./GraphWrapper";
 import TabPane from "./TabPane";
 import TextResizer from "./TextResizer";
@@ -21,15 +23,20 @@ const Main = memo(
   ({ children, textToParse, setHoverLineNumber }: MainProps) => {
     const [shouldResize, triggerResize] = useState(0);
     const trigger = useCallback(() => triggerResize((n) => n + 1), []);
+    const { isReady } = useContext(GraphContext);
     return (
       <>
         <TabPane triggerResize={trigger}>{children}</TabPane>
         <GraphWrapper>
-          <Graph
-            textToParse={textToParse}
-            setHoverLineNumber={setHoverLineNumber}
-            shouldResize={shouldResize}
-          />
+          {isReady ? (
+            <Graph
+              textToParse={textToParse}
+              setHoverLineNumber={setHoverLineNumber}
+              shouldResize={shouldResize}
+            />
+          ) : (
+            <div>Select a Graph</div>
+          )}
         </GraphWrapper>
         <TextResizer />
       </>

@@ -37,8 +37,7 @@ export const darkTheme: typeof colors = {
 };
 
 const config: Partial<SlangConfig> = {
-  baseFontFamily:
-    "nm, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+  baseFontFamily: "Karla, sans-serif",
   baseFontSizePx: 20,
   baseFontLineHeightMobile: 1.75,
   breakpoints: {

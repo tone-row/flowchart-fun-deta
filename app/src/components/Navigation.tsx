@@ -16,26 +16,39 @@ import { useHistory, useParams } from "react-router-dom";
 import { AppContext } from "./AppContext";
 import { Dialog } from "@reach/dialog";
 import "@reach/dialog/styles.css";
+import { useMutation, useQuery } from "react-query";
+import { createFlowchart, getFlowcharts, queryClient } from "../api";
+import { useDefaultText, useText } from "../hooks";
 
 const noPaddingBottom = { tablet: { pb: 0 } };
 const largeGap = 10;
 
 export default function Navigation() {
-  const { setShowing } = useContext(AppContext);
-  const { watch, register, handleSubmit } = useForm();
+  const { watch, register, handleSubmit, reset } = useForm();
+  const { data } = useQuery(["flowcharts"], getFlowcharts);
+  const { mutate: createFlowchartMutation } = useMutation(createFlowchart, {
+    onSettled: () => {
+      queryClient.invalidateQueries(["flowcharts"]);
+      reset();
+    },
+  });
+  const { setShowing, setWorkspace } = useContext(AppContext);
   const title = watch("chartTitle");
   const [charts, setCharts] = useState<string[]>([]);
   const { push } = useHistory();
   const { workspace = "" } = useParams<{ workspace?: string }>();
   const [erase, setErase] = useState("");
   const [copy, setCopy] = useState("");
+  const defaultText = useDefaultText();
 
+  // Create Chart
   const onSubmit = useCallback(
     ({ chartTitle }: { chartTitle: string }) => {
-      if (chartTitle) {
-        push(`/${chartTitle}`);
-        setShowing("editor");
-      }
+      createFlowchartMutation({ title: chartTitle, text: defaultText });
+      // if (chartTitle) {
+      //   push(`/${chartTitle}`);
+      //   setShowing("editor");
+      // }
     },
     [push, setShowing]
   );
@@ -97,11 +110,7 @@ export default function Navigation() {
             <Trans>Create a New Chart</Trans>
           </Type>
           <Box template="none / 1fr auto" gap={3}>
-            <Input
-              {...register("chartTitle", {
-                setValueAs,
-              })}
-            />
+            <Input {...register("chartTitle")} />
             <Button
               disabled={title?.length < 2 || charts.includes(title)}
               type="submit"
@@ -110,15 +119,22 @@ export default function Navigation() {
               <Trans>Create</Trans>
             </Button>
           </Box>
-          <Type size={-2} color="palette-white-3">
-            flowchart.fun/{title}
-          </Type>
         </Section>
         <Section>
           <Type weight="700">
             <Trans>Your Charts</Trans>
           </Type>
           <Box>
+            {data?.map((chart) => (
+              <Box
+                key={chart.key}
+                as="button"
+                onClick={() => setWorkspace(chart.key)}
+                className={styles.chartButton}
+              >
+                <Type>{chart.title}</Type>
+              </Box>
+            ))}
             {charts.map((chart) => (
               <Box
                 key={chart}
@@ -220,9 +236,6 @@ const Input = forwardRef((props, ref) => {
   );
 });
 
-const setValueAs = (value: string) =>
-  value.replace(/[^a-z0-9]/gi, "-").toLocaleLowerCase();
-
 function DeleteChart({
   erase,
   setErase,
@@ -305,11 +318,7 @@ function CopyChart({
           <Type>
             <Trans>What would you like to name this copy?</Trans>
           </Type>
-          <Input
-            {...register("chartTitle", {
-              setValueAs,
-            })}
-          />
+          <Input {...register("chartTitle")} />
         </Section>
         <Box content="normal space-between" flow="column" gap={3}>
           <Button type="button" onClick={handleDismiss}>

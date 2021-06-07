@@ -1,7 +1,10 @@
 import { t } from "@lingui/macro";
-import { Dispatch } from "react";
+import { Dispatch, useContext, useState } from "react";
+import { useQuery } from "react-query";
 import { useLocation, useParams } from "react-router-dom";
 import useLocalStorage from "react-use-localstorage";
+import { getFlowchart } from "./api";
+import { AppContext } from "./components/AppContext";
 
 export function useAnimationSetting() {
   let { search } = useLocation();
@@ -10,8 +13,7 @@ export function useAnimationSetting() {
   return animation === "0" ? false : true;
 }
 
-export function useLocalStorageText(): [string, Dispatch<string>, string] {
-  const { workspace = "" } = useParams<{ workspace?: string }>();
+export function useDefaultText() {
   const defaultText = `${t`This app works by typing`}
   ${t`Indenting creates a link to the current line`}
   ${t`any text: before a colon creates a label`}
@@ -27,9 +29,29 @@ ${t`comments`}
 
 ${t`Have fun! 🎉`}
 */`;
-  const [text, setText] = useLocalStorage(
-    ["flowcharts.fun", workspace].filter(Boolean).join(":"),
-    defaultText
-  );
-  return [text, setText, defaultText];
+  return defaultText;
+}
+
+export function useText() {
+  const { workspace } = useContext(AppContext);
+  const [text, setText] = useState<string>("");
+  const { data } = useQuery(["flowchart", workspace], getFlowchart, {
+    enabled: !!workspace,
+    onSuccess: (result) => {
+      if (result.text) {
+        setText(result.text);
+      }
+    },
+  });
+
+  const isReady = !!data;
+
+  // debounce update
+
+  // const [text, setText] = useLocalStorage(
+  //   ["flowcharts.fun", workspace].filter(Boolean).join(":"),
+  //   defaultText
+  // );
+
+  return { text, setText, isReady };
 }
